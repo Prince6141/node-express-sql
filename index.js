@@ -2,30 +2,40 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 require("dotenv").config();
-const db = require("./Utils/database");
+const sequelize = require("./Utils/database");
 const rootDir = require("./Utils/path");
+const adminRoutes = require("./routes/admin");
+const shopRoutes = require("./routes/shop");
+const {specs,swaggerUi} = require("./swagger");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-const adminRoutes = require("./routes/admin");
-const shopRoutes = require("./routes/shop");
-
-// Set extended option to true or false based on your needs
+// Middleware for parsing request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// If you are using JSON parsing
 app.use(bodyParser.json());
 
-// Serving static files (if needed)
+// Serving static files
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use("/admin", adminRoutes);
 app.use("/shop", shopRoutes);
 
-app.use("*", (req, res, next) => {
+// 404 handler
+app.use("*", (req, res) => {
   res.status(404).sendFile(path.join(rootDir, "views", "404.html"));
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is listing on port : ${PORT}`);
-});
+// Synchronize database and start server
+sequelize
+  .sync({ alter: true })
+  .then((result) => {
+    console.log("Database synchronized successfully.");
+    app.listen(PORT, () => {
+      console.log(`Server is listening on port : ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Error synchronizing the database:", error);
+  });

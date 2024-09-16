@@ -1,17 +1,27 @@
 const Product = require("../models/product");
 
-exports.postAddProduct = async (req) => {
+exports.postAddProduct = (req, res) => {
   const { title, price, description, imageUrl } = req.body;
+  console.log({ title, price, description, imageUrl });
 
-  // Create a new instance of Product
-  const product = new Product(null, title, imageUrl, description, price);
-
-  try {
-    // Await the save operation and return the result
-    const result = await product.save();
-    return result[0].affectedRows; // Return the affected rows to the caller
-  } catch (error) {
-    console.error(error);
-    throw error; // Throw the error so the caller can handle it
-  }
+  return Product.create({
+    title: title,
+    price: price,
+    description: description,
+    imageUrl: imageUrl,
+  })
+    .then((result) => {
+      console.log(result.dataValues);
+      return {
+        message: "Product added successfully!",
+        product: result.dataValues,
+      };
+    })
+    .catch((error) => {
+      console.error("Error adding product:", error);
+      return {
+        message: "Failed to add product",
+        error: error.message, // Include error message for debugging
+      };
+    });
 };
