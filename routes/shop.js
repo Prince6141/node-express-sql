@@ -1,6 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { getProducts, getProduct, deleteProduct, updateProduct } = require("../controllers/shop");
+const {
+  getProducts,
+  getProduct,
+  deleteProduct,
+  updateProduct,
+} = require("../controllers/shop");
 
 /**
  * @swagger
@@ -31,8 +36,8 @@ router.get("/get-all-products", async (req, res) => {
   } catch (err) {
     console.error("get-all-products error", err);
     res
-        .status(500)
-        .json({ message: "Internal server error", error: err.message });
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
   }
 });
 
@@ -77,7 +82,9 @@ router.get("/get-product/:id", async (req, res) => {
     res.status(200).json(product);
   } catch (err) {
     console.error("get-product error", err);
-    res.status(500).json({ message: "Internal server error", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
   }
 });
 
@@ -112,14 +119,16 @@ router.delete("/remove-product/:id", async (req, res) => {
 
   try {
     const result = await deleteProduct(id);
-    if (result.message === 'Product deleted successfully') {
+    if (result.message === "Product deleted successfully") {
       return res.status(200).json(result);
     } else {
       return res.status(404).json({ message: "Product not found" });
     }
   } catch (err) {
     console.error("remove-product error", err);
-    res.status(500).json({ message: "Internal server error", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
   }
 });
 
@@ -162,14 +171,16 @@ router.put("/update-product/:id", async (req, res) => {
 
   try {
     const result = await updateProduct(id, updateData);
-    if (result.message === 'Product updated successfully') {
+    if (result.message === "Product updated successfully") {
       return res.status(200).json(result);
     } else {
       return res.status(404).json({ message: "Product not found" });
     }
   } catch (err) {
     console.error("update-product error", err);
-    res.status(500).json({ message: "Internal server error", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
   }
 });
 

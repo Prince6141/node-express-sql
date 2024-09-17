@@ -2,7 +2,6 @@ const Product = require("../models/product");
 
 exports.postAddProduct = (req, res) => {
   const { title, price, description, imageUrl } = req.body;
-  console.log({ title, price, description, imageUrl });
 
   return Product.create({
     title: title,

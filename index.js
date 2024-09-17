@@ -6,7 +6,8 @@ const sequelize = require("./Utils/database");
 const rootDir = require("./Utils/path");
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
-const {specs,swaggerUi} = require("./swagger");
+const userRoutes = require("./routes/userRoutes");
+const { specs, swaggerUi } = require("./swagger");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -16,11 +17,14 @@ app.use(bodyParser.json());
 
 // Serving static files
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+// Swagger docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use("/admin", adminRoutes);
 app.use("/shop", shopRoutes);
+app.use("/user", userRoutes);
 
 // 404 handler
 app.use("*", (req, res) => {
