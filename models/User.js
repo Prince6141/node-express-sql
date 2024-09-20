@@ -17,14 +17,7 @@ const User = sequelize.define(
         len: [2, 100], // Optional: Ensure name is between 2 and 100 characters
       },
     },
-    email: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false,
-      validate: {
-        isEmail: true,
-      },
-    },
+    email: DataTypes.STRING,
     password: {
       type: DataTypes.STRING,
       allowNull: false,

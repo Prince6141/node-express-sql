@@ -28,7 +28,7 @@ const {
  */
 router.get("/get-all-products", async (req, res) => {
   try {
-    const products = await getProducts();
+    const products = await getProducts(req);
     if (products.length === 0) {
       return res.status(404).json({ message: "No products found" });
     }
@@ -68,14 +68,14 @@ router.get("/get-all-products", async (req, res) => {
  *         description: Internal server error
  */
 router.get("/get-product/:id", async (req, res) => {
-  const id = req.params.id;
+  const prodId = req.params.id;
 
-  if (isNaN(id)) {
+  if (isNaN(prodId)) {
     return res.status(400).json({ message: "Invalid product ID" });
   }
 
   try {
-    const product = await getProduct(id);
+    const product = await getProduct(req, prodId);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
