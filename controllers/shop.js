@@ -6,8 +6,14 @@ exports.getProducts = (req) => {
     req.user
       .getProducts()
       // return Product.findAll() // Fetch all products
-      .then((products) => products)
+      .then((products) => {
+        console.log("All Products", products);
+
+        return products;
+      })
       .catch((error) => {
+        console.log("get all products", error);
+
         throw error; // Rethrow error to be handled by route
       })
   );
