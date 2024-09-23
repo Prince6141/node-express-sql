@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const Product = require("../models/Product");
 
 // Function to get all products
@@ -60,17 +59,62 @@ exports.getCart = (req, res) => {
     .getCart()
     .then((cart) => {
       if (!cart) {
+        // Create cart if it doesn't exist
+        return req.user.createCart();
+      }
+      return cart; // Return the existing cart
+    })
+    .then((cart) => {
+      return cart.getProducts(); // Get products from the cart
+    })
+    .then((products) => {
+      console.log("Products in cart:", products);
+      res.status(201).json({ products });
+    })
+    .catch((err) => {
+      console.error("Error retrieving or creating the cart:", err);
+      res.status(500).send("Error retrieving cart"); // Handle error response
+    });
+};
+
+exports.postCart = (req, res, next) => {
+  const prodId = req.body.productId;
+  let fetchedCart;
+  let newQuantity = 1;
+
+  req.user
+    .getCart()
+    .then((cart) => {
+      if (!cart) {
         return req.user.createCart();
       }
       return cart;
     })
     .then((cart) => {
-      return cart.getProducts();
+      fetchedCart = cart;
+      return cart.getProducts({ where: { id: prodId } });
     })
     .then((products) => {
-      console.log("Products in  cart", products);
+      let product;
+      if (products.length > 0) {
+        product = products[0];
+        newQuantity = product.CartItem.quantity + 1; // Increment quantity if product exists
+      }
+
+      return Product.findByPk(prodId).then((product) => {
+        if (!product) {
+          throw new Error("Product not found");
+        }
+        return fetchedCart.addProduct(product, {
+          through: { quantity: newQuantity },
+        });
+      });
+    })
+    .then(() => {
+      res.status(201).json({ message: "Product successfully added to cart" });
     })
     .catch((err) => {
-      console.error("Error retrieving or creating the cart:", err);
+      console.error("Error adding product to cart:", err);
+      res.status(500).send(err);
     });
 };

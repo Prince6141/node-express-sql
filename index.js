@@ -4,8 +4,8 @@ const path = require("path");
 require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 8080;
-const { specs, swaggerUi } = require("./swagger");
 
+const { specs, swaggerUi } = require("./swagger");
 const sequelize = require("./Utils/database");
 const rootDir = require("./Utils/path");
 const adminRoutes = require("./routes/admin");
