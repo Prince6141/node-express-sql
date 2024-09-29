@@ -236,6 +236,19 @@
         }
       }
     },
+    "/get-orders": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/register-user": {
       "post": {
         "description": "",

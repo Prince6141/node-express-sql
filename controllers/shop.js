@@ -199,3 +199,24 @@ exports.createOrder = async (req, res, next) => {
       .json({ message: "Failed to create order", error: err.message });
   }
 };
+
+exports.getOrders = async (req, res, next) => {
+  try {
+    // Fetch orders including associated products
+    const orders = await req.user.getOrders({
+      include: [
+        {
+          model: Product, // Include the Product model
+          through: { attributes: ["quantity"] }, // Specify attributes from the join table (OrderItem)
+        },
+      ],
+    });
+
+    res.status(200).json(orders); // Send the orders with associated products
+  } catch (err) {
+    console.error("Failed to get orders:", err);
+    res
+      .status(500)
+      .json({ message: "Failed to get orders", error: err.message });
+  }
+};
