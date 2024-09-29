@@ -1,29 +1,23 @@
-const swaggerJsdoc = require("swagger-jsdoc");
-const swaggerUi = require("swagger-ui-express");
+const swaggerAutogen = require("swagger-autogen")();
 
-const options = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Shop API",
-      version: "1.0.0",
-      description: "A simple Express Shop API",
-    },
-    servers: [
-      {
-        url: "http://localhost:8080/shop", // Replace with your server URL
-      },
-      {
-        url: "http://localhost:8080/admin", // Server URL for admin routes
-      },
-    ],
+const doc = {
+  info: {
+    title: "E-Commerce API",
+    description: "API documentation for E-Commerce project",
   },
-  apis: ["./routes/shop.js", "./routes/admin.js"], // Path to the API docs, adjust if needed
+  host: "localhost:8080", // Adjust to your environment
+  schemes: ["http"],
 };
 
-const specs = swaggerJsdoc(options);
+const outputFile = "./swagger-output.json";
+const endpointsFiles = [
+  "./routes/admin.js",
+  "./routes/shop.js",
+  "./routes/userRoutes.js",
+]; // Route files
 
-module.exports = {
-  specs,
-  swaggerUi,
-};
+// Generate Swagger docs, then start the server
+swaggerAutogen(outputFile, endpointsFiles).then(() => {
+  // Starting the server using nodemon
+  require("./index"); // This points to your app's entry point
+});

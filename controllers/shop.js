@@ -109,7 +109,7 @@ exports.postCart = (req, res, next) => {
 
       return Product.findByPk(prodId).then((product) => {
         if (!product) {
-          throw new Error("Product not found");
+          res.status(500).send("Product not found");
         }
         return fetchedCart.addProduct(product, {
           through: { quantity: newQuantity },
@@ -123,4 +123,79 @@ exports.postCart = (req, res, next) => {
       console.error("Error adding product to cart:", err);
       res.status(500).send(err);
     });
+};
+
+exports.removeProductFromCart = (req, res, next) => {
+  const prodId = req.body.prodId;
+
+  req.user
+    .getCart()
+    .then((cart) => {
+      return cart.getProducts({
+        where: { id: prodId },
+      });
+    })
+    .then((products) => {
+      if (products.length === 0) {
+        return res.status(404).json({ message: "Product not found in cart" });
+      }
+
+      const product = products[0];
+
+      // Ensure that cartItem is available
+      if (!product.CartItem) {
+        return res
+          .status(404)
+          .json({ message: "Product not associated with cart" });
+      }
+
+      return product.CartItem.destroy();
+    })
+    .then(() => {
+      res.status(200).json({ message: "Product removed from cart" });
+    })
+    .catch((err) => {
+      console.error("Error deleting product from cart:", err);
+      res.status(500).send(err);
+    });
+};
+
+exports.createOrder = async (req, res, next) => {
+  try {
+    // Get the user's cart
+    const cart = await req.user.getCart();
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    // Get all products from the cart
+    const products = await cart.getProducts();
+    if (products.length === 0) {
+      return res.status(400).json({ message: "No products in the cart" });
+    }
+
+    // Create a new order for the user
+    const order = await req.user.createOrder();
+
+    // Add products to the order with their quantities
+    await order.addProducts(
+      products.map((product) => {
+        product.OrderItem = { quantity: product.CartItem.quantity };
+        return product;
+      })
+    );
+
+    // Clear the cart after the order is created
+    await cart.setProducts(null); // Removes all products from the cart
+
+    // Send success response
+    res
+      .status(201)
+      .json({ message: "Order Created successfully", data: order });
+  } catch (err) {
+    console.error("Error Creating Order:", err);
+    res
+      .status(500)
+      .json({ message: "Failed to create order", error: err.message });
+  }
 };

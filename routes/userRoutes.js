@@ -1,10 +1,8 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const { registerUser, loginUser } = require("../controllers/users");
-const { getCart, postCart } = require("../controllers/shop");
 
 const router = express.Router();
 
@@ -23,8 +21,5 @@ const upload = multer({ storage: storage });
 router.post("/register-user", upload.single("profileImage"), registerUser);
 
 router.post("/login", loginUser);
-router.get("/get-cart-details", getCart);
-
-router.post("/addToCart", postCart);
 
 module.exports = router;

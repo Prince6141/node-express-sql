@@ -5,6 +5,10 @@ const {
   getProduct,
   deleteProduct,
   updateProduct,
+  getCart,
+  postCart,
+  removeProductFromCart,
+  createOrder,
 } = require("../controllers/shop");
 
 /**
@@ -183,5 +187,13 @@ router.put("/update-product/:id", async (req, res) => {
       .json({ message: "Internal server error", error: err.message });
   }
 });
+
+router.get("/get-cart-details", getCart);
+
+router.post("/addToCart", postCart);
+
+router.delete("/removeFromCart", removeProductFromCart);
+
+router.post("/create-order", createOrder);
 
 module.exports = router;

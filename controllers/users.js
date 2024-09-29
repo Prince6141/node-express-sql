@@ -5,6 +5,7 @@ const User = require("../models/User");
 // Register User (unchanged)
 exports.registerUser = (req, res) => {
   const { name, email, password } = req.body;
+  console.log(name, email, password, req.file);
 
   if (!name || !email || !password || !req.file) {
     return res.status(400).json({ message: "All fields are required" });

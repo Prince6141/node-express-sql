@@ -1,0 +1,5 @@
+{
+  "watch": ["routes", "models", "controllers", "swagger.js"],
+  "ext": "js,json",
+  "exec": "node swagger.js"
+}

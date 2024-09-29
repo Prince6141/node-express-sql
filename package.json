@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node swagger.js",
+    "dev": "nodemon --exec node swagger.js"
   },
   "keywords": [],
   "author": "Prince",
@@ -20,6 +21,7 @@
     "mysql2": "^3.11.2",
     "nodemon": "^3.1.4",
     "sequelize": "^6.37.3",
+    "swagger-autogen": "^2.23.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   }
